@@ -9,3 +9,4 @@ __pycache__/
 collections.json
 test.json
 currentVersion.txt
+.gitignore_example
