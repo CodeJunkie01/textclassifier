@@ -5,11 +5,11 @@
 5. create .env file
 
 ===== env vars =====
-OPENAI_SECRET
-OPENAI_ORG_ID
-ZOTERO_KEY
-ZOTERO_USER_ID
-ZOTERO_MAIN_COLLECTION_ID (optional; if not set user is asked for collection name on startup)
+- OPENAI_SECRET
+- OPENAI_ORG_ID
+- ZOTERO_KEY
+- ZOTERO_USER_ID
+- ZOTERO_MAIN_COLLECTION_ID (optional; if not set user is asked for collection name on startup)
 
 
 
