@@ -1,0 +1,11 @@
+
+csv/*
+environment/
+
+__pycache__/
+.vscode/settings.json
+.env
+.gitignore
+collections.json
+test.json
+currentVersion.txt
