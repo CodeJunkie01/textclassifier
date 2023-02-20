@@ -2,6 +2,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split, RandomizedSearchCV as RSCV
 import pandas as pd
 import numpy as np
+from imblearn.ensemble import BalancedRandomForestClassifier
 version = 0
 with open('currentVersion.txt', 'r') as f:
     lines = f.readlines()
@@ -23,7 +24,7 @@ param_grid = {'n_estimators': np.arange(50, 200, 15),
               'max_samples': [0.3, 0.5, 0.8],
               }
 
-model = RSCV(RandomForestClassifier(), param_grid,
+model = RSCV(BalancedRandomForestClassifier(), param_grid,
              n_iter=15).fit(X_train, y_train)
 model = model.best_estimator_
 

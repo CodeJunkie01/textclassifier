@@ -10,6 +10,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split, RandomizedSearchCV
 from sklearn.metrics import classification_report, accuracy_score
 from clearScreen import cls
+from imblearn.ensemble import BalancedRandomForestClassifier
+import time
 
 
 def createZot():
@@ -43,8 +45,10 @@ X_train, X_test, y_train, y_test = train_test_split(
 # train random forest classifier
 cls()
 print("Training classifier...")
-clf = RandomForestClassifier(max_depth=5, max_features=0.8, max_samples=0.5,  # type: ignore
-                             n_estimators=170)
+# clf = RandomForestClassifier(max_depth=5, max_features=0.8, max_samples=0.5,  # type: ignore
+#                             n_estimators=170)
+clf = BalancedRandomForestClassifier(max_depth=5, max_features=0.9, max_samples=0.5,
+                                     n_estimators=110)
 clf.fit(X_train, y_train)
 df = pd.read_csv(prediction_path)
 df["embedding"] = df.embedding.apply(eval).apply(
@@ -73,7 +77,7 @@ while inMenu:
         indexString = "0" + indexString
     while inPointMenu:
         cls()
-        print("ENTER to continue, a to show abstract, c to change prediction, s to save, q to quit, p for previous")
+        print("ENTER:continue - a:show abstract - c:change prediction - s:save - q:quit - p:previous - e:export")
         print("------------ "+indexString+" ------------")
         if relevancePrediction[i] == 1:
             print('\033[92m' + df["title"][i] + '\033[0m')
@@ -113,24 +117,28 @@ while inMenu:
                 i -= 1
         elif action == "e":
             # add item to zotero collection via its id
+            action2 = input("Are you sure you want to export? (y/n)")
+            if action2 != "y":
+                continue
             zot = createZot()
+            exportCount = 0
+            for y in range(len(relevancePrediction)):
+                if relevancePrediction[y] == 1:
+                    exportCount += 1
+
             for x in range(len(relevancePrediction)):
                 if relevancePrediction[x] == 1:
                     id = df["id"][x]
                     item = zot.item(id)
                     updated = zot.add_tags(item, ["relevant"])
-                    print(item)
-                    print(updated)
+                    cls()
+                    print("Adding tags: [" + "#"*int((x+1)/len(relevancePrediction)*40) + " "*(
+                        40-int((x+1)/len(relevancePrediction)*40)) + "]")
+            cls()
+            print("Exported " + exportCount.__str__() +
+                  " items to zotero. Resuming...")
+            time.sleep(2)
 
-        elif action == "ep":
-            zot = createZot()
-            x = 0
-            while x <= i:
-                if relevancePrediction[x] == 1:
-                    id = df["id"][x]
-                    zot.add_tags(id, ["relevant"])
-                    print("marked " + df["title"][x] + " as relevant")
-                x += 1
 
 if save:
     cls()

@@ -74,8 +74,8 @@ class PaperInfo:
             response = openai.Embedding.create(
                 model=model, input=paperInfoString)
         except:
-            print("Rate limit exceeded, waiting 30 seconds")
-            time.sleep(30)
+            print("Rate limit exceeded, waiting 60 seconds")
+            time.sleep(60)
             response = openai.Embedding.create(
                 model=model, input=paperInfoString)
 
