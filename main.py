@@ -39,7 +39,7 @@ def getIdFromCollectionName(collectionName, collections):
 
 openai.organization = config('OPENAI_ORG_ID')
 openai.api_key = config('OPENAI_SECRET')
-library_type = "user"
+library_type = config('ZOTERO_LIBRARY_TYPE')
 library_id = config('ZOTERO_USER_ID')
 api_key = config('ZOTERO_KEY')
 zot = zotero.Zotero(library_id, library_type, api_key)
@@ -54,8 +54,18 @@ else:
     except:
         print("Invalid input, using default value")
         index = 0
+limitInput = input("Insert limit - only in steps of 100s: ")
+limitInput = int(limitInput)
+limitInput = limitInput - 1
+loops = (limitInput/100).__floor__()
 
 items = zot.collection_items(main_collection_id, start=index)
+currentIndex = index
+while loops > 0:
+    currentIndex += 100
+    items += zot.collection_items(main_collection_id, start=currentIndex)
+    loops -= 1
+print(len(items))
 
 
 class PaperInfo:
