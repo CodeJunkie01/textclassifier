@@ -134,15 +134,36 @@ if (skipped > 0):
 convert = input("Start conversion? (y/n) ")
 if convert != "y":
     exit()
-
-
+# create embeddings for all papers at once to avoid rate limit
+paperEmbeddings = list()
 for paper in paperList:
-    time.sleep(0.1)
-    progress = int((paperList.index(paper)+1)/paperList.__len__()*40)
-    cls()
-    print("Creating Embeddings: [" + "#" *
-          int(progress) + " " * int(40-progress) + "]")
-    paper.setEmbedding()
+    paperInfoString = 'Title: %s \n\nAbstract: %s \n\nAuthors: %s' % (
+        paper.title, paper.abstract, paper.authors)
+    paperEmbeddings.append(paperInfoString)
+
+model = "text-embedding-ada-002"
+response = None
+try:
+    response = openai.Embedding.create(model=model, input=paperEmbeddings)
+except:
+    print("Rate limit exceeded, waiting 60 seconds")
+    time.sleep(60)
+    response = openai.Embedding.create(model=model, input=paperEmbeddings)
+
+    # get embedding value from response that is in form of a json object. The embedding is in the "embedding" key inside the "data" key
+index = 0
+for paper in paperList:
+    paper.embedding = response['data'][index]['embedding']
+    print("Created embedding for " + paper.title)
+    index += 1
+    # time.sleep(0.1)
+    # progress = int((paperList.index(paper)+1)/paperList.__len__()*40)
+    # cls()
+    # print("Creating Embeddings: [" + "#" *
+    #     int(progress) + " " * int(40-progress) + "]")
+    # paper.setEmbedding()
+    # paper.embedding = paper
+print(paperList[0].embedding)
 while True:
     action = input("Is this a training or a prediction? (t/p) ")
     if action == "t":

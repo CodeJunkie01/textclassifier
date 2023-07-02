@@ -1,2 +1,4 @@
-open-ai
+openai
 pyzotero
+python-decouple
+pandas
