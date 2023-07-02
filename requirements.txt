@@ -2,3 +2,6 @@ openai
 pyzotero
 python-decouple
 pandas
+pinecone-client
+scikit-learn==1.2.1
+imbalanced-learn
